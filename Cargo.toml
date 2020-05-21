@@ -245,6 +245,7 @@ sources = [
   "sources-syslog",
   "sources-tls",
   "sources-vector",
+  "sources-kubernetes-logs",
 ]
 sources-docker = ["shiplift"]
 sources-file = ["bytesize"]
@@ -262,6 +263,7 @@ sources-stdin = ["bytesize"]
 sources-syslog = ["sources-socket", "syslog_loose"]
 sources-tls = ["sources-http", "sources-logplex", "sources-socket", "sources-splunk_hec"]
 sources-vector = ["sources-socket"]
+sources-kubernetes-logs = ["kubernetes"]
 
 # Transforms
 transforms = [
@@ -411,7 +413,7 @@ kafka-integration-tests = ["sinks-kafka"]
 loki-integration-tests = ["sinks-loki"]
 pulsar-integration-tests = ["sinks-pulsar"]
 splunk-integration-tests = ["sinks-splunk_hec", "warp"]
-kubernetes-integration-tests = []
+kubernetes-integration-tests = ["sources-kubernetes-logs"]
 
 shutdown-tests = ["sources","sinks-console","sinks-prometheus","sinks-blackhole","unix","rdkafka","transforms-log_to_metric","transforms-lua"]
 disable-resolv-conf = []
