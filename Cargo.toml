@@ -159,6 +159,7 @@ lru = "0.4.3"
 bloom = "0.3.2"
 pulsar = { version = "0.3.0", optional = true }
 task-compat = "0.1"
+k8s-openapi = { version = "0.7", features = ["v1_15"], optional = true }
 
 [target.'cfg(windows)'.dependencies]
 schannel = "0.1"
@@ -221,7 +222,7 @@ leveldb-cmake = ["leveldb", "leveldb/leveldb-sys-3"]
 
 # Enables kubernetes dependencies and shared code. Kubernetes-related sources,
 # transforms and sinks should depend on this feature.
-kubernetes = []
+kubernetes = ["k8s-openapi"]
 
 # Sources
 sources = [
