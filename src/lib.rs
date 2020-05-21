@@ -21,6 +21,7 @@ pub mod internal_events;
 pub mod async_read;
 #[cfg(feature = "rdkafka")]
 pub mod kafka;
+pub mod kubernetes;
 pub mod list;
 pub mod metrics;
 pub mod region;

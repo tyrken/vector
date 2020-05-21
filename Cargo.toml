@@ -219,6 +219,10 @@ leveldb-plain = ["leveldb", "leveldb/leveldb-sys-2"]
 # This feature is more portable, but requires `cmake` as build dependency. Use it if `leveldb-plain` doesn't work.
 leveldb-cmake = ["leveldb", "leveldb/leveldb-sys-3"]
 
+# Enables kubernetes dependencies and shared code. Kubernetes-related sources,
+# transforms and sinks should depend on this feature.
+kubernetes = []
+
 # Sources
 sources = [
   "sources-docker",
