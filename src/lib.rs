@@ -1,4 +1,5 @@
 #![allow(clippy::new_without_default, clippy::needless_pass_by_value)]
+#![recursion_limit = "256"]
 
 #[macro_use]
 extern crate tracing;
