@@ -151,6 +151,7 @@ colored = "1.9"
 # Forked version to support graceful shutdown with custom tls impl
 warp = { version = "0.1", git = "https://github.com/timberio/warp", branch = "0.1.x", default-features = false, optional = true }
 evmap = { version = "7", features = ["bytes"], optional = true }
+evmap10 = { package = "evmap", version = "10", features = ["bytes"], optional = true }
 logfmt = { version = "0.0.2", optional = true }
 notify = "4.0.14"
 once_cell = "1.3"
@@ -224,7 +225,7 @@ leveldb-cmake = ["leveldb", "leveldb/leveldb-sys-3"]
 
 # Enables kubernetes dependencies and shared code. Kubernetes-related sources,
 # transforms and sinks should depend on this feature.
-kubernetes = ["k8s-openapi"]
+kubernetes = ["k8s-openapi", "evmap10"]
 
 # Sources
 sources = [
