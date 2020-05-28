@@ -91,7 +91,7 @@ test-integration-pulsar: ## Runs Pulsar integration tests
 test-integration-splunk: ## Runs Splunk integration tests
 	$(RUN) test-integration-splunk
 
-PACKAGE_DEB_USE_CONTAINER ?= "$(USE_CONTAINER)"
+PACKAGE_DEB_USE_CONTAINER ?= $(USE_CONTAINER)
 test-integration-kubernetes: ## Runs Kubernetes integration tests
 	PACKAGE_DEB_USE_CONTAINER="$(PACKAGE_DEB_USE_CONTAINER)" USE_CONTAINER=none $(RUN) test-integration-kubernetes
 
