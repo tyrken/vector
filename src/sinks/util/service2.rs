@@ -4,11 +4,10 @@ use crate::buffers::Acker;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tower03::{
-    layer::{util::Stack, Layer},
+    layer::util::Stack,
     limit::{ConcurrencyLimit, RateLimit},
     retry::Retry,
     timeout::Timeout,
-    util::BoxService,
     Service, ServiceBuilder,
 };
 
@@ -143,34 +142,6 @@ pub struct TowerRequestLayer<L, Request> {
     settings: TowerRequestSettings,
     retry_logic: L,
     _pd: std::marker::PhantomData<Request>,
-}
-
-impl<S, L, Request> Layer<S> for TowerRequestLayer<L, Request>
-where
-    S: Service<Request> + Send + Clone + 'static,
-    S::Response: Send + 'static,
-    S::Error: Into<crate::Error> + Send + Sync + 'static,
-    S::Future: Send + 'static,
-    L: RetryLogic<Response = S::Response> + Send + 'static,
-    Request: Clone + Send + 'static,
-{
-    type Service = BoxService<Request, S::Response, crate::Error>;
-
-    fn layer(&self, inner: S) -> Self::Service {
-        let policy = self.settings.retry_policy(self.retry_logic.clone());
-
-        let l = ServiceBuilder::new()
-            .concurrency_limit(self.settings.in_flight_limit)
-            .rate_limit(
-                self.settings.rate_limit_num,
-                self.settings.rate_limit_duration,
-            )
-            .retry(policy)
-            .timeout(self.settings.timeout)
-            .service(inner);
-
-        BoxService::new(l)
-    }
 }
 
 mod compat {
