@@ -92,8 +92,8 @@ test-integration-splunk: ## Runs Splunk integration tests
 	$(RUN) test-integration-splunk
 
 PACKAGE_DEB_USE_CONTAINER ?= $(USE_CONTAINER)
-test-integration-kubernetes: ## Runs Kubernetes integration tests
-	PACKAGE_DEB_USE_CONTAINER="$(PACKAGE_DEB_USE_CONTAINER)" USE_CONTAINER=none $(RUN) test-integration-kubernetes
+test-e2e-kubernetes: ## Runs Kubernetes E2E tests
+	PACKAGE_DEB_USE_CONTAINER="$(PACKAGE_DEB_USE_CONTAINER)" USE_CONTAINER=none $(RUN) test-e2e-kubernetes
 
 test-shutdown: ## Runs shutdown tests
 	$(RUN) test-shutdown
