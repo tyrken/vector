@@ -196,7 +196,7 @@ jobs:
       - run: make slim-builds
       - run: make test-e2e-kubernetes
         env:
-          USE_MINIKUBE_DOCKER: "true"
+          SKIP_CONTAINER_IMAGE_PUBLISHING: "true"
           CONTAINER_IMAGE_REPO: vector-test
           PACKAGE_DEB_USE_CONTAINER: docker
 
