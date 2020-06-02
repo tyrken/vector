@@ -3,6 +3,7 @@ use super::retries2::{FixedRetryPolicy, RetryLogic};
 use super::{Batch, BatchSettings, BatchSink};
 use crate::buffers::Acker;
 use serde::{Deserialize, Serialize};
+use std::fmt::Debug;
 use std::time::Duration;
 use tower03::{
     layer::util::Stack, limit::RateLimit, retry::Retry, timeout::Timeout, Service, ServiceBuilder,
@@ -116,7 +117,7 @@ impl TowerRequestSettings {
         L: RetryLogic<Response = S::Response>,
         S: Service<Request> + Clone + Send + 'static,
         S::Error: Into<crate::Error> + Send + Sync + 'static,
-        S::Response: Send + std::fmt::Debug,
+        S::Response: Send + Sync + std::fmt::Debug,
         S::Future: Send + 'static,
         B: Batch<Output = Request>,
         Request: Send + Clone + 'static,
