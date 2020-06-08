@@ -18,6 +18,8 @@ mod udp;
 mod unix;
 mod vector;
 
+pub mod kubernetes;
+
 pub use self::add_fields::*;
 pub use self::aws_kinesis_streams::*;
 pub use self::blackhole::*;
