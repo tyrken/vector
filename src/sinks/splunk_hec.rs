@@ -125,7 +125,8 @@ impl HttpSink for HecSinkConfig {
             chrono::Utc::now().timestamp_nanos()
         };
 
-        let sourcetype = event.get(&event::log_schema().source_type_key()).cloned();
+        // Do not merge this change into master
+        // let sourcetype = event.get(&event::log_schema().source_type_key()).cloned();
 
         let fields = self
             .indexed_fields
