@@ -22,9 +22,6 @@ use tower::Service;
 /// File in which Kubernetes stores service account token.
 const TOKEN_PATH: &str = "/var/run/secrets/kubernetes.io/serviceaccount/token";
 
-/// Kuberentes API should be reachable at this address
-const KUBERNETES_SERVICE_ADDRESS: &str = "https://kubernetes.default.svc";
-
 /// Path to certificate authority certificate
 const CA_PATH: &str = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
 
@@ -39,10 +36,29 @@ pub struct ClientConfig {
     node_name: Option<String>,
 }
 
+fn join_host_port(host: &str, port: &str) -> String {
+    if host.contains(":") {
+        return format!("[{}]:{}", host, port);
+    }
+    format!("{}:{}", host, port)
+}
+
 impl ClientConfig {
     /// Loads Kubernetes API access information available to Pods of cluster.
     pub fn in_cluster(node: String, resolver: Resolver) -> Result<Self, BuildError> {
-        let server = Uri::from_static(KUBERNETES_SERVICE_ADDRESS);
+        let host = std::env::var("KUBERNETES_SERVICE_HOST").context(NotInCluster {
+            missing: "KUBERNETES_SERVICE_HOST",
+        })?;
+        let port = std::env::var("KUBERNETES_SERVICE_PORT").context(NotInCluster {
+            missing: "KUBERNETES_SERVICE_PORT",
+        })?;
+
+        let server = Uri::builder()
+            .scheme("https")
+            .authority(join_host_port(host.as_str(), port.as_str()).as_str())
+            .path_and_query("/")
+            .build()
+            .context(InvalidUrl)?;
 
         let token = fs::read(TOKEN_PATH)
             .map_err(|error| {
@@ -273,6 +289,22 @@ impl Version {
 
 #[derive(Debug, Snafu)]
 pub enum BuildError {
+    /// The in-cluster configuration requested while executing not in a cluster
+    /// environment.
+    #[snafu(display("unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined"))]
+    NotInCluster {
+        /// The underlying error.
+        source: std::env::VarError,
+
+        /// The field that's missing.
+        missing: &'static str,
+    },
+    /// The configuration resulted in an invalid URL.
+    #[snafu(display("unable to construct a proper API server URL"))]
+    InvalidUrl {
+        /// The underlying error.
+        source: http::Error,
+    },
     #[snafu(display("Http client construction errored {}.", source))]
     HttpError { source: crate::Error },
     #[snafu(display("Failed constructing request: {}.", source))]
