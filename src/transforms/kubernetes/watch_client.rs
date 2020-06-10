@@ -23,7 +23,7 @@ use tower::Service;
 const TOKEN_PATH: &str = "/var/run/secrets/kubernetes.io/serviceaccount/token";
 
 /// Kuberentes API should be reachable at this address
-const KUBERNETES_SERVICE_ADDRESS: &str = "https://kubernetes.default.svc";
+const DEFAULT_KUBERNETES_HOST: &str = "kubernetes.default.svc";
 
 /// Path to certificate authority certificate
 const CA_PATH: &str = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
@@ -42,7 +42,13 @@ pub struct ClientConfig {
 impl ClientConfig {
     /// Loads Kubernetes API access information available to Pods of cluster.
     pub fn in_cluster(node: String, resolver: Resolver) -> Result<Self, BuildError> {
-        let server = Uri::from_static(KUBERNETES_SERVICE_ADDRESS);
+        let k8s_svc_host =
+            std::env::var("KUBERNETES_SERVICE_HOST").unwrap_or(DEFAULT_KUBERNETES_HOST.to_string());
+        let k8s_svc_port = std::env::var("KUBERNETES_SERVICE_PORT").unwrap_or("443".to_string());
+        let k8s_svc_uri = format!("https://{}:{}", k8s_svc_host, k8s_svc_port);
+        info!("Contacting K8s via {:?}", k8s_svc_uri);
+
+        let server = k8s_svc_uri.parse().context(InvalidUri)?;
 
         let token = fs::read(TOKEN_PATH)
             .map_err(|error| {
